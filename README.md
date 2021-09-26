@@ -505,3 +505,35 @@ db.one_piece.aggregate([
     {$count: "wanted 300M"},
 ])
 ```
+
+### ⚡️ Sort (ORDER BY)
+
+- `1`: Ascending
+- `-1`: Descending
+
+`{$sort:{ <field_name>: <number>, <field_name>: <number> }}`
+
+```sh
+db.one_piece.aggregate([
+    {$sort:
+        { wanted: -1 }
+    },
+])
+```
+
+```sh
+db.one_piece.aggregate([
+    {$sort: { wanted: -1 } },
+    {$project: {name: 1, wanted: 1}},
+])
+```
+
+```sh
+db.one_piece.aggregate([
+    {$match:
+        { wanted: {$gte: 300000000 }}
+    },
+    {$sort: { wanted: -1 } },
+    {$project: {name: 1, wanted: 1}},
+])
+```

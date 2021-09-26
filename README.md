@@ -492,3 +492,16 @@ db.one_piece.aggregate([
     {$project: {name: 1, wanted: 1}}
 ])
 ```
+
+### ⚡️ Count
+
+`{$count:{ <field_name>: <string> }}`
+
+```sh
+db.one_piece.aggregate([
+    {$match:
+        { wanted: {$gte: 300000000 }}
+    },
+    {$count: "wanted 300M"},
+])
+```

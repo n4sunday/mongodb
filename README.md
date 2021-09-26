@@ -126,7 +126,7 @@ db.<collection_name>.insertMany([<document>])
 
 `Ex`
 
-```sh
+```json
 use mydb
 
 db.createCollection("user")
@@ -157,7 +157,7 @@ db.user.insertMany([{name:"john"},{name:"dany"}])
 
 **insert value array** `Ex`
 
-```sh
+```json
 db.user.insertOne({name:"robert",position: ["king","warrior"]})
 ```
 
@@ -175,7 +175,7 @@ db.user.insertOne({name:"robert",position: ["king","warrior"]})
 
 **insert value object** `Ex`
 
-```sh
+```json
 db.user.insertOne({name:"robb", general: {weight: 60, height: 190, gender: "male"}})
 ```
 
@@ -196,7 +196,7 @@ db.<collection_name>.find()
 
 **Find Condition**
 
-```sh
+```json
 // Initial Database
 use mydb
 
@@ -212,6 +212,6 @@ db.one_piece.insertOne({name:"Nico Robin", position: "archaeologist", wanted: 13
 db.one_piece.insertOne({name:"The SK Brook", position: "musician", wanted: 83000000 })
 ```
 
-```sh
+```json
 
 ```

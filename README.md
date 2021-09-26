@@ -537,3 +537,24 @@ db.one_piece.aggregate([
     {$project: {name: 1, wanted: 1}},
 ])
 ```
+
+### ⚡️ Limit
+
+`{$limit: <number_of_document>}`
+
+```sh
+db.one_piece.aggregate([
+    {$limit: 2},
+])
+```
+
+```sh
+db.one_piece.aggregate([
+    {$match:
+        { wanted: {$gte: 300000000 }}
+    },
+    {$sort: { wanted: -1 } },
+    {$project: {name: 1, wanted: 1}},
+    {$limit: 3},
+])
+```

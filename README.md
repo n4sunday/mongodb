@@ -558,3 +558,14 @@ db.one_piece.aggregate([
     {$limit: 3},
 ])
 ```
+
+### ⚡️ Skip
+
+`{$skip: <number_of_document>}`
+
+```sh
+db.one_piece.aggregate([
+    {$project: {name: 1}},
+    {$skip: 2}
+])
+```

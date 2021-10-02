@@ -798,3 +798,224 @@ db.one_piece.aggregate([
   }
 ]
 ```
+
+### ⚡️ Lookup (JOIN)
+
+```sh
+{
+  $lookup: {
+    from: "collection_name_foreign",
+    localField: "field_main_collection",
+    foreignField: "field_relation_collection",
+    as: "name_of_result"
+  }
+}
+
+```
+
+initial data
+
+```sh
+db.createCollection("switch")
+db.createCollection("brand")
+
+db.brand.insertMany([
+    {_id: "6158e3275bd37e5dfc4e5283", name:"Cherry MX"},
+    {_id: "6158e4215bd37e5dfc4e5290", name:"Drop"},
+    {_id: "6158e4215bd37e5dfc4e5291",name:"Gateron"},
+    {_id: "6158e4215bd37e5dfc4e5292",name:"Durock"},
+    {_id: "6158e4215bd37e5dfc4e5294",name:"NovelKey"},
+    {_id: "6158e4215bd37e5dfc4e5295",name:"Zeal"},
+    {_id: "6158e4215bd37e5dfc4e5296",name:"Akko"},
+    {_id: "6158e4215bd37e5dfc4e5297",name:"Outemu"},
+    {_id: "6158e4215bd37e5dfc4e5298",name:"Gazzew"},
+    {_id: "6158e4215bd37e5dfc4e5299",name:"Kailh"},
+])
+
+db.switch.insertMany([
+    {name: "MX Speed Silver", type: "linear", force: 46, brand_id: "6158e3275bd37e5dfc4e5283"},
+    {name: "Black Inks", type: "linear", force: 60, brand_id: "6158e4215bd37e5dfc4e5291"},
+    {name: "T1", type: "tactile", force: 67, brand_id: "6158e4215bd37e5dfc4e5292"},
+    {name: "Alpaca V2", type: "linear", force: 62, brand_id: "6158e4215bd37e5dfc4e5292"},
+    {name: "Cream", type: "linear", force: 55, brand_id: "6158e4215bd37e5dfc4e5294"},
+    {name: "Tealios V2", type: "linear", force: 67, brand_id: "6158e4215bd37e5dfc4e5295"},
+    {name: "Boba U4T", type: "tactile", force: 62, brand_id: "6158e4215bd37e5dfc4e5298"},
+    {name: "BOX Heavy Dark Yellow", type: "linear", force: 70, brand_id: "6158e4215bd37e5dfc4e5299"},
+    {name: "NK_Blueberry", type: "tactile", force: 80, brand_id: "6158e4215bd37e5dfc4e5294"},
+    {name: "MX Black", type: "linear", force: 60, brand_id: "6158e3275bd37e5dfc4e5283"},
+])
+```
+
+`Ex`
+
+```sh
+db.switch.aggregate([
+  {$lookup: {
+      from: "brand",
+      localField: "brand_id",
+      foreignField: "_id",
+      as: "brand"
+  }}
+])
+```
+
+```JSON
+// Response
+[
+  {
+    "_id": {"$oid": "6158e6175bd37e5dfc4e529c"},
+    "brand": [
+      {
+        "_id": "6158e3275bd37e5dfc4e5283",
+        "name": "Cherry MX"
+      }
+    ],
+    "brand_id": "6158e3275bd37e5dfc4e5283",
+    "force": 46,
+    "name": "MX Speed Silver",
+    "type": "linear"
+  },
+  {
+    "_id": {"$oid": "6158e6175bd37e5dfc4e529d"},
+    "brand": [
+      {
+        "_id": "6158e4215bd37e5dfc4e5291",
+        "name": "Gateron"
+      }
+    ],
+    "brand_id": "6158e4215bd37e5dfc4e5291",
+    "force": 60,
+    "name": "Black Inks",
+    "type": "linear"
+  },
+  {
+    "_id": {"$oid": "6158e6175bd37e5dfc4e529e"},
+    "brand": [
+      {
+        "_id": "6158e4215bd37e5dfc4e5292",
+        "name": "Durock"
+      }
+    ],
+    "brand_id": "6158e4215bd37e5dfc4e5292",
+    "force": 67,
+    "name": "T1",
+    "type": "tactile"
+  },
+  {
+    "_id": {"$oid": "6158e6175bd37e5dfc4e529f"},
+    "brand": [
+      {
+        "_id": "6158e4215bd37e5dfc4e5292",
+        "name": "Durock"
+      }
+    ],
+    "brand_id": "6158e4215bd37e5dfc4e5292",
+    "force": 62,
+    "name": "Alpaca V2",
+    "type": "linear"
+  },
+  {
+    "_id": {"$oid": "6158e6175bd37e5dfc4e52a0"},
+    "brand": [
+      {
+        "_id": "6158e4215bd37e5dfc4e5294",
+        "name": "NovelKey"
+      }
+    ],
+    "brand_id": "6158e4215bd37e5dfc4e5294",
+    "force": 55,
+    "name": "Cream",
+    "type": "linear"
+  },
+  {
+    "_id": {"$oid": "6158e6175bd37e5dfc4e52a1"},
+    "brand": [
+      {
+        "_id": "6158e4215bd37e5dfc4e5295",
+        "name": "Zeal"
+      }
+    ],
+    "brand_id": "6158e4215bd37e5dfc4e5295",
+    "force": 67,
+    "name": "Tealios V2",
+    "type": "linear"
+  },
+  {
+    "_id": {"$oid": "6158e6175bd37e5dfc4e52a2"},
+    "brand": [
+      {
+        "_id": "6158e4215bd37e5dfc4e5298",
+        "name": "Gazzew"
+      }
+    ],
+    "brand_id": "6158e4215bd37e5dfc4e5298",
+    "force": 62,
+    "name": "Boba U4T",
+    "type": "tactile"
+  },
+  {
+    "_id": {"$oid": "6158e6175bd37e5dfc4e52a3"},
+    "brand": [
+      {
+        "_id": "6158e4215bd37e5dfc4e5299",
+        "name": "Kailh"
+      }
+    ],
+    "brand_id": "6158e4215bd37e5dfc4e5299",
+    "force": 70,
+    "name": "BOX Heavy Dark Yellow",
+    "type": "linear"
+  },
+  {
+    "_id": {"$oid": "6158e6175bd37e5dfc4e52a4"},
+    "brand": [
+      {
+        "_id": "6158e4215bd37e5dfc4e5294",
+        "name": "NovelKey"
+      }
+    ],
+    "brand_id": "6158e4215bd37e5dfc4e5294",
+    "force": 80,
+    "name": "NK_Blueberry",
+    "type": "tactile"
+  },
+  {
+    "_id": {"$oid": "6158e6175bd37e5dfc4e52a5"},
+    "brand": [
+      {
+        "_id": "6158e3275bd37e5dfc4e5283",
+        "name": "Cherry MX"
+      }
+    ],
+    "brand_id": "6158e3275bd37e5dfc4e5283",
+    "force": 60,
+    "name": "MX Black",
+    "type": "linear"
+  }
+]
+```
+
+look and match
+
+```sh
+db.switch.aggregate([
+  {$lookup: {
+      from: "brand",
+      localField: "brand_id",
+      foreignField: "_id",
+      as: "brand"
+  }},
+  {$match: {"brand.name": "Cherry MX"}},
+])
+```
+```sh
+db.switch.aggregate([
+  {$lookup: {
+      from: "brand",
+      localField: "brand_id",
+      foreignField: "_id",
+      as: "brand"
+  }},
+  {$match: {"force": { $gte: 50 }}},
+])
+```

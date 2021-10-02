@@ -569,3 +569,232 @@ db.one_piece.aggregate([
     {$skip: 2}
 ])
 ```
+
+### ⚡️ Group (GROUP BY)
+
+`{$group: {<field_for_group>:<statistic_operation>}}`
+
+|    Name     |                  Description                  |
+| :---------: | :-------------------------------------------: |
+|   `$sum`    |        หาผลรวมของ Document ภายในกลุ่ม         |
+|   `$avg`    |        หาค่าเฉลี่ย Document ภายในกลุ่ม        |
+|   `$min`    |        หาค่าต่ำสุด Document ภายในกลุ่ม        |
+|   `$max`    |        หาค่าสูงสุด Document ภายในกลุ่ม        |
+|  `$first`   |        หาค่า Document ลำดับแรกในกลุ่ม         |
+|   `$last`   |        หาค่า Document ลำดับท้ายในกลุ่ม        |
+|   `$push`   |       แทรกค่า Array ไปยังผลลัพธ์ในกลุ่ม       |
+| `$addToSet` | แทรกค่า Array ไปยังผลลัพธ์ในกลุ่มโดยไม่ซ้ำกัน |
+
+**group and count**
+
+```sh
+db.one_piece.aggregate([
+    {$group:{ _id: "$group", member: {$count:{} } } }
+])
+```
+
+```JSON
+// Response
+[
+  {
+    "_id": "straw hat",
+    "member": 8
+  },
+  {
+    "_id": "buggy",
+    "member": 1
+  },
+  {
+    "_id": "kuja",
+    "member": 1
+  },
+  {
+    "_id": "doflamingo",
+    "member": 1
+  }
+]
+```
+
+**sum**
+
+```sh
+db.one_piece.aggregate([
+    {$group:{ _id: null, total:{$sum: "$wanted"} } }
+])
+```
+
+**avg and sum**
+
+```sh
+db.one_piece.aggregate([
+    {$group:{ _id: "$group", avg:{$sum: "$wanted"} } }
+])
+```
+
+**match, group, avg and sum**
+
+```sh
+db.one_piece.aggregate([
+    {$match: { "general.gender": "female"}},
+    {$group:{ _id: "$group", avg:{$sum: "$wanted"} } }
+])
+```
+
+**max**
+
+```sh
+db.one_piece.aggregate([
+    {$group: { _id: "$group" ,wanted_max: {$max: "$wanted"} } }
+])
+```
+
+**mix**
+
+```sh
+db.one_piece.aggregate([
+    {$group: { _id: "$group" ,wanted_min: {$min: "$wanted"} } }
+])
+```
+
+**first**
+
+```sh
+db.one_piece.aggregate([
+    {$group: { _id: "$group" ,first_name: {$first: "$name"} } }
+])
+```
+
+**last**
+
+```sh
+db.one_piece.aggregate([
+    {$group: { _id: "$group" ,last_name: {$last: "$name"} } }
+])
+```
+
+**push**
+
+```sh
+db.one_piece.aggregate([
+    {
+        $group: {
+            _id: "$group",
+            sum_wanted: {$sum: "$wanted"},
+            detail: {$push: {name: "$name", wanted: "$wanted"} }
+        }
+     }
+])
+```
+
+```JSON
+// Response
+[
+  {
+    "_id": "doflamingo",
+    "detail": [
+      {
+        "name": "Donquixote Doflamingo",
+        "wanted": 340000000
+      }
+    ],
+    "sum_wanted": 340000000
+  },
+  {
+    "_id": "straw hat",
+    "detail": [
+      {
+        "name": "Roronoa Zoro",
+        "wanted": 320000000
+      },
+      {
+        "name": "Nami",
+        "wanted": 80000000
+      },
+      {
+        "name": "God Usopp",
+        "wanted": 200000000
+      },
+      {
+        "name": "Vinsmoke Sanji",
+        "wanted": 330000000
+      },
+      {
+        "name": "Chopper",
+        "wanted": 100
+      },
+      {
+        "name": "Nico Robin",
+        "wanted": 130000000
+      },
+      {
+        "name": "The SK Brook",
+        "wanted": 83000000
+      },
+      {
+        "name": "Monkey D Luffy",
+        "wanted": 1500000000
+      }
+    ],
+    "sum_wanted": 2643000100
+  },
+  {
+    "_id": "kuja",
+    "detail": [
+      {
+        "name": "Boa Hancock",
+        "wanted": 50000000
+      }
+    ],
+    "sum_wanted": 50000000
+  },
+  {
+    "_id": "buggy",
+    "detail": [
+      {
+        "name": "Buggy",
+        "wanted": 550000000
+      }
+    ],
+    "sum_wanted": 550000000
+  }
+]
+```
+
+**addToSet**
+
+```sh
+db.one_piece.aggregate([
+    {
+        $group: {
+            _id: "$group",
+            sum_wanted: {$sum: "$wanted"},
+            data_member: {$addToSet: "$name"}
+        }
+     }
+])
+```
+
+```JSON
+[
+  {
+    "_id": "doflamingo",
+    "data_member": ["Donquixote Doflamingo"],
+    "sum_wanted": 340000000
+  },
+  {
+    "_id": "straw hat",
+    "data_member": ["Nico Robin", "The SK Brook", "God Usopp", "Roronoa Zoro", "Chopper", "Vinsmoke Sanji", "Monkey D Luffy", "Nami"],
+    "sum_wanted": 2643000100
+  },
+  {
+    "_id": "kuja",
+    "data_member": ["Boa Hancock"],
+    "sum_wanted": 50000000
+  },
+  {
+    "_id": "buggy",
+    "data_member": ["Buggy"],
+    "sum_wanted": 550000000
+  }
+]
+```
